@@ -11,6 +11,7 @@ export const useInvestigations = () => {
     const error = ref<Error | null>(null);
     const ctScan = ref('');
     const mri = ref('');
+    const showValidationAlert = ref(false)
 
     const fetchInvestigations = async () => {
         try {
@@ -53,10 +54,14 @@ export const useInvestigations = () => {
     });
 
      const submitInvestigations = async () => {
-        if (selectedInvestigations.value.length === 0 && !ctScan.value && !mri.value) {
-            alert('Please select at least one investigation or specify CT scan/MRI details.');
-            return;
-        }
+          if (selectedInvestigations.value.length === 0 && !ctScan.value && !mri.value) {
+                showValidationAlert.value = true
+                setTimeout(() => {
+                showValidationAlert.value = false
+                }, 5000)
+                return
+            }
+            showValidationAlert.value = false
 
         try {
             isSubmitting.value = true;
@@ -109,6 +114,10 @@ export const useInvestigations = () => {
         showSuccessModal.value = false;
     };
 
+    const closeValidationAlert = () => {
+        showValidationAlert.value = false
+    }
+
     onMounted(async () => {
         await fetchInvestigations();
     });
@@ -129,6 +138,8 @@ export const useInvestigations = () => {
         submitInvestigations,
         refresh,
         toggleInvestigation,
-        resetForm
+        resetForm,
+        showValidationAlert,
+        closeValidationAlert
     };
 };

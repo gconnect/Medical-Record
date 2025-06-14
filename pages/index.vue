@@ -1,23 +1,42 @@
 <template>
   <div class="container-fluid">
+    <nav class="navbar navbar-expand-md navbar-light bg-white d-md-none border-bottom">
+      <div class="container-fluid">
+        <a class="navbar-brand text-primary fw-bold" href="#">
+          <i class="fas fa-th-large me-2"></i>
+          Dashboard
+        </a>
+        <button 
+          class="navbar-toggler" 
+          type="button" 
+          @click="toggleMobileMenu"
+          aria-controls="mobileSidebar" 
+          :aria-expanded="showMobileMenu"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
+    </nav>
+
     <div class="row min-vh-100">
-      <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-        <div class="position-sticky pt-3 mt-5">
+      <nav class="col-md-3 col-lg-2 d-md-block sidebar" :class="{ 'show': showMobileMenu }" id="mobileSidebar">
+        <div class="position-sticky pt-3" :class="{ 'mt-5': !showMobileMenu, 'mt-2': showMobileMenu }">
           <ul class="nav flex-column">
             <li class="nav-item dashboard-sidebar text-secondary">
-              <a class="nav-link active text-white fw-bold" href="#">
+              <a class="nav-link active text-white fw-bold" href="#" @click="closeMobileMenu">
                 <i class="fas fa-th-large me-2"></i>
                 Dashboard
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-user me-2"></i>
                 Profile
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#" data-bs-toggle="collapse" data-bs-target="#servicesSubmenu">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu" data-bs-toggle="collapse" data-bs-target="#servicesSubmenu">
                 <i class="fas fa-cog me-2"></i>
                 Services
                 <i class="fas fa-chevron-down ms-auto"></i>
@@ -25,52 +44,52 @@
               <div class="collapse" id="servicesSubmenu">
                 <ul class="nav flex-column ms-3">
                   <li class="nav-item">
-                    <a class="nav-link text-secondary small" href="#">Service 1</a>
+                    <a class="nav-link text-secondary small" href="#" @click="closeMobileMenu">Service 1</a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link text-secondary small" href="#">Service 2</a>
+                    <a class="nav-link text-secondary small" href="#" @click="closeMobileMenu">Service 2</a>
                   </li>
                 </ul>
               </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-file-medical me-2"></i>
                 Medical Records
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-wallet me-2"></i>
                 Care Wallet
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-envelope me-2"></i>
                 Messages
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-book me-2"></i>
                 Resources
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-cog me-2"></i>
                 Account Settings
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-life-ring me-2"></i>
                 Contact Support
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-secondary" href="#">
+              <a class="nav-link text-secondary" href="#" @click="closeMobileMenu">
                 <i class="fas fa-sign-out-alt me-2"></i>
                 Logout
               </a>
@@ -127,6 +146,12 @@
                 </div>
 
                 <div v-else>
+                  <div v-if="showValidationAlert" class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>Validation Error!</strong> Please select at least one investigation or specify CT scan/MRI details before submitting.
+                    <button type="button" class="btn-close" @click="closeValidationAlert" aria-label="Close"></button>
+                  </div>
+
                   <div v-for="(categoryInvestigations, categoryName) in filteredInvestigations" :key="categoryName" class="mb-4">
                     <h4 class="text-primary fw-bold mb-3">{{ categoryName }}</h4>              
                     <div class="row g-3">
@@ -198,6 +223,12 @@
     </div>
 
     <div 
+      v-if="showMobileMenu" 
+      class="mobile-backdrop d-md-none"
+      @click="closeMobileMenu"
+    ></div>
+
+    <div 
       class="modal fade" 
       id="successModal" 
       tabindex="-1" 
@@ -249,8 +280,20 @@ const {
   refresh,
   toggleInvestigation,
   mri,
-  ctScan
+  ctScan,
+  showValidationAlert,
+  closeValidationAlert
 } = useInvestigations()
+
+const showMobileMenu = ref(false)
+
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value
+}
+
+const closeMobileMenu = () => {
+  showMobileMenu.value = false
+}
 
 const closeModal = () => {
   showSuccessModal.value = false
@@ -353,6 +396,31 @@ useHead({
   background-color: #4f46e5 !important;
 }
 
+.alert {
+  animation: slideInDown 0.3s ease-in-out;
+}
+
+@keyframes slideInDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.mobile-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1020;
+}
+
 .modal.show {
   display: block !important;
 }
@@ -368,13 +436,62 @@ useHead({
   opacity: 0.5;
 }
 
+.navbar {
+  z-index: 1030;
+}
+
+.navbar-brand {
+  font-size: 1.1rem;
+}
+
+.navbar-toggler {
+  border: none;
+  padding: 0.25rem 0.5rem;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none;
+}
+
+.sidebar {
+  min-height: 100vh;
+  box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+  background-color: white !important;
+  border-right: 1px solid #dee2e6;
+  transition: transform 0.3s ease-in-out;
+}
+
 @media (max-width: 767.98px) {
   .sidebar {
-    min-height: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    z-index: 1025;
+    background-color: white !important;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+    overflow-y: auto;
+  }
+  
+  .sidebar.show {
+    transform: translateX(0);
   }
   
   .col-md-9.ms-sm-auto {
     margin-left: 0 !important;
+  }
+  
+  .sidebar.show::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 280px;
+    width: calc(100vw - 280px);
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: -1;
   }
 }
 </style>
