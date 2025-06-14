@@ -3,8 +3,7 @@
     <nav class="navbar navbar-expand-md navbar-light bg-white d-md-none border-bottom">
       <div class="container-fluid">
         <a class="navbar-brand text-primary fw-bold" href="#">
-          <i class="fas fa-th-large me-2"></i>
-          Dashboard
+          <img src="/assets/images/logo.png" width="150px"/>
         </a>
         <button 
           class="navbar-toggler" 
