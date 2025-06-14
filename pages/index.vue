@@ -5,7 +5,17 @@
         <a class="navbar-brand text-primary fw-bold" href="#">
           <img src="/assets/images/logo.png" width="150px"/>
         </a>
-        <button 
+        <div>
+           <button type="button" class="btn btn-sm position-relative me-2">
+            <i class="fas fa-envelope"></i>
+            <span class="position-absolute top-0 translate-middle badge rounded-pill bg-danger">
+              3
+            </span>
+          </button>
+          <button type="button" class="btn btn-sm me-3">
+            <i class="fas fa-bell"></i>
+          </button>
+          <button 
           class="navbar-toggler" 
           type="button" 
           @click="toggleMobileMenu"
@@ -15,6 +25,7 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
+        </div>   
       </div>
     </nav>
 
@@ -99,11 +110,11 @@
 
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
-          <div class="mt-5">
+          <div class="mt-md-5">
             <h1 class="h2 text-primary fw-bold mt-5">Update Patient Medical Record</h1>
             <p class="text-muted">Click the tabs to view and edit patient medical details</p>
           </div>
-          <div class="btn-toolbar mb-2 mb-md-0">
+          <div class="d-none d-md-flex align-items-center flex-nowrap">
             <div class="btn-group me-2">
               <button type="button" class="btn  btn-sm">
                 <i class="fas fa-question-circle me-1"></i>
