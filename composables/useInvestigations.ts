@@ -73,20 +73,19 @@ export const useInvestigations = () => {
             console.log('Plain investigations array:', plainInvestigations);
 
           const response = await GqlAddMedicalRecord(payload);
-                
+                console.log("medical record", response)
                 isSubmitting.value = false
-                showSuccessModal.value = true;
+           
                 selectedInvestigations.value = [];
                 ctScan.value = '';
                 mri.value = '';       
-       
-                console.log("medical record", response)
+            showSuccessModal.value = true;
+            console.log("showModal", showSuccessModal.value)
+            console.log("submitting", isSubmitting.value)
 
         } catch (err) {
-            console.error('Error submitting investigations:', err);
-            alert('Failed to submit investigations. Please try again.');
-        } finally {
             isSubmitting.value = false;
+            console.error('Error submitting investigations:', err);
         }
     };
 

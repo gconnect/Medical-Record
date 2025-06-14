@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row min-vh-100">
       <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-        <div class="position-sticky pt-3">
+        <div class="position-sticky pt-3 mt-5">
           <ul class="nav flex-column">
             <li class="nav-item dashboard-sidebar text-secondary">
               <a class="nav-link active text-white fw-bold" href="#">
@@ -82,36 +82,27 @@
       <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
           <div class="mt-5">
-            <h1 class="h2 text-primary fw-bold">Update Patient Medical Record</h1>
+            <h1 class="h2 text-primary fw-bold mt-5">Update Patient Medical Record</h1>
             <p class="text-muted">Click the tabs to view and edit patient medical details</p>
           </div>
           <div class="btn-toolbar mb-2 mb-md-0">
             <div class="btn-group me-2">
-              <button type="button" class="btn btn-outline-secondary btn-sm">
+              <button type="button" class="btn  btn-sm">
                 <i class="fas fa-question-circle me-1"></i>
                 Take a tour
               </button>
-              <button type="button" class="btn btn-outline-secondary btn-sm position-relative">
+              <button type="button" class="btn  btn-sm position-relative">
                 <i class="fas fa-envelope"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                <span class="position-absolute top-0 translate-middle badge rounded-pill bg-danger">
                   3
                 </span>
               </button>
-              <button type="button" class="btn btn-outline-secondary btn-sm">
+              <button type="button" class="btn  btn-sm">
                 <i class="fas fa-bell"></i>
               </button>
             </div>
             <div class="dropdown">
-              <button class="btn btn-outline-secondary dropdown-toggle btn-sm" type="button" data-bs-toggle="dropdown">
-                <img src="https://via.placeholder.com/32x32" class="rounded-circle me-1" alt="Profile">
-                Glory
-              </button>
-              <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Profile</a></li>
-                <li><a class="dropdown-item" href="#">Settings</a></li>
-                <li><hr class="dropdown-divider"></li>
-                <li><a class="dropdown-item" href="#">Logout</a></li>
-              </ul>
+              <img src="/assets/images/profile-pix.png" width="30px" class="rounded-circle me-1" alt="Profile">
             </div>
           </div>
         </div>
@@ -191,7 +182,7 @@
                     <button 
                       @click="submitInvestigations" 
                       class="btn btn-primary px-4 py-2"
-                      :disabled="isSubmitting || selectedInvestigations.length === 0"
+                      :disabled="isSubmitting"
                     >
                       <span v-if="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
                       <i v-else class="fas fa-paper-plane me-2"></i>
@@ -205,32 +196,48 @@
         </div>
       </main>
     </div>
-    <div class="modal fade" id="successModal" tabindex="-1" v-if="showSuccessModal">
+
+    <div 
+      class="modal fade" 
+      id="successModal" 
+      tabindex="-1" 
+      aria-labelledby="successModalLabel" 
+      aria-hidden="true"
+      :class="{ show: showSuccessModal }"
+      :style="{ display: showSuccessModal ? 'block' : 'none' }"
+    >
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
           <div class="modal-header border-0">
-            <h5 class="modal-title text-success">
+            <h5 id="successModalLabel" class="modal-title text-success">
               <i class="fas fa-check-circle me-2"></i>
               Success!
             </h5>
-            <button type="button" class="btn-close" @click="showSuccessModal = false"></button>
+            <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <p>Medical record has been successfully updated and sent.</p>
           </div>
           <div class="modal-footer border-0">
-            <button type="button" class="btn btn-primary" @click="showSuccessModal = false">
+            <button type="button" class="btn btn-primary" @click="closeModal">
               Close
             </button>
           </div>
         </div>
       </div>
     </div>
+
+    <div 
+      v-if="showSuccessModal" 
+      class="modal-backdrop fade show"
+      @click="closeModal"
+    ></div>
   </div>
 </template>
 
 <script setup>
 import { useInvestigations } from '~/composables/useInvestigations'
+
 const {
   isLoading,
   error,
@@ -245,11 +252,21 @@ const {
   ctScan
 } = useInvestigations()
 
+const closeModal = () => {
+  showSuccessModal.value = false
+}
+
 watch(showSuccessModal, (newValue) => {
   if (newValue) {
-    const modal = new bootstrap.Modal(document.getElementById('successModal'))
-    modal.show()
+    document.body.classList.add('modal-open')
+    console.log('Modal should be visible now')
+  } else {
+    document.body.classList.remove('modal-open')
   }
+})
+
+onUnmounted(() => {
+  document.body.classList.remove('modal-open')
 })
 
 useHead({
@@ -297,6 +314,7 @@ useHead({
   color: white;
   background-color: rgba(255, 255, 255, 0.2);
 }
+
 .card {
   border-radius: 12px;
 }
@@ -333,6 +351,21 @@ useHead({
 
 .bg-primary {
   background-color: #4f46e5 !important;
+}
+
+.modal.show {
+  display: block !important;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1040;
+  width: 100vw;
+  height: 100vh;
+  background-color: #000;
+  opacity: 0.5;
 }
 
 @media (max-width: 767.98px) {
